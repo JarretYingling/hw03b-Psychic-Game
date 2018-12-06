@@ -1,51 +1,28 @@
 // javascript
 
-function getRandomLetter(allLetters) {
-    return allLetters[getRandomInteger(0, allLetters.length)];
+function resetGame() {
+    chosenLetter = "";
+    guessedLetters = [];
+    const LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
+    randomLetter = getRandomLetter(LETTERS);
+    updateGameState();
+    return LETTERS;
+}
+
+function getRandomLetter(paramLetters) {
+    return paramLetters[getRandomInteger(0, paramLetters.length)];
 }
 
 function getRandomInteger(min, max) {
     return Math.floor(Math.random() * (max - min)) + min;
 }
 
-function compareLetters() {
-    if (chosenLetter === randomLetter) {
-        matchYes();
-        return;
-    } 
-    matchNo();
-}
-
-function matchYes() {
-    winGame();
-}
-
-function matchNo() {
-    if (guessedLetters.length >= guessLimit) {
-        loseGame();
-    };
-}
-
-function winGame() {
-    wins++;
-    message = "You WIN!!!";
-    alert(message);
-    remainingLetters = resetGame();
-}
-
-function loseGame() {
-    losses++;
-    message = "You LOSE!!!";
-    alert(message);
-    remainingLetters = resetGame();
-}
-
-function resetGame() {
-    chosenLetter = "";
-    guessedLetters = [];
-    let allLetters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
-    randomLetter = getRandomLetter(allLetters);
-    return allLetters;
+function updateGameState() {
+    pWins.textContent = "Wins: " + wins;
+    pLosses.textContent = "Losses: " + losses;
+    let guessesRemaining = guessLimit - guessedLetters.length;
+    pRemaining.textContent = "Guesses Remaining: " + guessesRemaining;
+    pGuesses.textContent = "Current Guesses: " + guessedLetters.toString();
 }
 
 function guessLetter(paramKey) {
@@ -63,13 +40,29 @@ function guessLetter(paramKey) {
     alert(message);
 }
 
+function compareLetters() {
+    if (chosenLetter === randomLetter) {
+        wins++;
+        message = "You WIN!!!\nThe letter was: " + randomLetter;
+    } else if (guessedLetters.length >= guessLimit) {
+        losses++;
+        message = "You LOSE!!!";
+    } else {
+        updateGameState();
+        return;
+    }
+    alert(message);
+    remainingLetters = resetGame();
+}
+
 function log() {
-    console.log("Chosen: " + chosenLetter);
-    console.log("Random: " + randomLetter);
-    console.log("Remaining: " + remainingLetters.toString());
-    console.log("Guessed: " + guessedLetters.toString());
     console.log("Wins: " + wins);
     console.log("Losses: " + losses);
+    console.log("Guesses Reamining: " + (guessLimit - guessedLetters.length));
+    console.log("Current Guesses: " + guessedLetters.toString());
+    console.log("Letters Remaining: " + remainingLetters.toString());
+    console.log("Chosen: " + chosenLetter);
+    console.log("Random: " + randomLetter);
     console.log("");
 }
 
@@ -83,16 +76,13 @@ let losses = 0;
 let remaining = 0;
 let guesses = 0;
 
+let guessLimit = 10;
 let chosenLetter = "";
 let randomLetter = "";
 let guessedLetters = [];
 let remainingLetters = resetGame();
 
-let guessLimit = 25;
-
 log();
-
-let message = "";
 
 document.onkeyup = function (eventKeyUp) {
     guessLetter(eventKeyUp.key.toUpperCase());
